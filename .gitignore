@@ -1,0 +1,9 @@
+# AutoHotKey compiled executables
+*.exe
+
+# Personal/private scripts
+private/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,5 +1,5 @@
 ; to-do.ahk
-; Pressione Ctrl+Alt+T para abrir o formulário de nova tarefa
+; Pressione Ctrl+Win+T para abrir o formulário de nova tarefa
 ; Os dados são enviados via POST para o webhook configurado abaixo
 
 #Requires AutoHotkey v2.0
@@ -21,7 +21,7 @@ JsonEscape(str) {
     return str
 }
 
-^!t::
+^#t::
 {
     ; Evita abrir múltiplas janelas
     if WinExist("Nova Tarefa - To-Do") {
@@ -49,8 +49,8 @@ JsonEscape(str) {
     SaveTask(btn, *) {
         data := toDoGui.Submit(false)
 
-        if (Trim(data.Title) = "") {
-            MsgBox("Por favor, insira um título para a tarefa.", "Atenção", "Icon! OK")
+        if (Trim(data.Title) = "" && Trim(data.Comment) = "") {
+            toDoGui.Destroy()
             return
         }
 

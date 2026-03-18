@@ -10,6 +10,17 @@
 WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook-test/20f1c56e-73c7-42ed-bba3-3a58f78be234"
 ; ─────────────────────────────────────────
 
+; Escapa uma string para uso seguro dentro de JSON
+JsonEscape(str) {
+    str := StrReplace(str, "\",  "\\")   ; barra invertida primeiro
+    str := StrReplace(str, '"',  '\"')   ; aspas duplas
+    str := StrReplace(str, "`r`n", "\n") ; CRLF → \n
+    str := StrReplace(str, "`n", "\n")   ; LF   → \n
+    str := StrReplace(str, "`r", "\n")   ; CR   → \n
+    str := StrReplace(str, "`t", "\t")   ; tab  → \t
+    return str
+}
+
 ^!t::
 {
     ; Evita abrir múltiplas janelas
@@ -43,9 +54,9 @@ WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook-test/20f1c56e-73c7-42
             return
         }
 
-        ; Escapa aspas para JSON válido
-        safeTitle   := StrReplace(StrReplace(data.Title,   "\", "\\"), '"', '\"')
-        safeComment := StrReplace(StrReplace(data.Comment, "\", "\\"), '"', '\"')
+        ; Escapa corretamente para JSON (barras, aspas, quebras de linha, tabs)
+        safeTitle   := JsonEscape(data.Title)
+        safeComment := JsonEscape(data.Comment)
 
         json := '{"title":"' safeTitle '","comment":"' safeComment '"}'
 

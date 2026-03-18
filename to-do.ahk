@@ -91,7 +91,6 @@ JsonEscape(str) {
             http.Send(json)
 
             if (http.Status = 200) {
-                MsgBox("✅ Tarefa enviada com sucesso!", "To-Do", "Iconi OK T3")
                 CloseGui()
             } else {
                 MsgBox("⚠️ Webhook retornou status " http.Status "`n`n" http.ResponseText, "Erro", "Icon! OK")

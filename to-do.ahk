@@ -10,6 +10,16 @@
 WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook-test/20f1c56e-73c7-42ed-bba3-3a58f78be234"
 ; ─────────────────────────────────────────
 
+; ── Paleta VS Code Dark ──────────────────
+COL_BG       := "1E1E1E"  ; fundo da janela
+COL_INPUT    := "2D2D2D"  ; fundo dos campos
+COL_BORDER   := "3C3C3C"  ; borda sutil
+COL_TEXT     := "D4D4D4"  ; texto principal
+COL_LABEL    := "9CDCFE"  ; labels (azul VS Code)
+COL_BTN_SAVE := "0E639C"  ; botão salvar (azul)
+COL_BTN_CANC := "3C3C3C"  ; botão cancelar
+; ────────────────────────────────────────
+
 ; Escapa uma string para uso seguro dentro de JSON
 JsonEscape(str) {
     str := StrReplace(str, "\",  "\\")   ; barra invertida primeiro
@@ -30,18 +40,30 @@ JsonEscape(str) {
     }
 
     toDoGui := Gui("+AlwaysOnTop", "Nova Tarefa - To-Do")
-    toDoGui.SetFont("s10", "Segoe UI")
-    toDoGui.MarginX := 15
-    toDoGui.MarginY := 12
+    toDoGui.BackColor := COL_BG
+    toDoGui.MarginX := 18
+    toDoGui.MarginY := 14
 
-    toDoGui.Add("Text", "w300", "📌 Título:")
-    titleField := toDoGui.Add("Edit", "w300 vTitle")
+    ; Labels
+    toDoGui.SetFont("s9 c" COL_LABEL, "Segoe UI")
+    toDoGui.Add("Text", "w300 Background" COL_BG, "TÍTULO")
 
-    toDoGui.Add("Text", "w300 y+10", "💬 Comentário:")
-    commentField := toDoGui.Add("Edit", "w300 h90 vComment Multi")
+    ; Campo título
+    toDoGui.SetFont("s10 c" COL_TEXT, "Consolas")
+    titleField := toDoGui.Add("Edit", "w300 y+4 vTitle Background" COL_INPUT)
 
-    toDoGui.Add("Button", "Default w140 y+14", "✔ Salvar").OnEvent("Click", SaveTask)
-    toDoGui.Add("Button", "w140 x+10", "✖ Cancelar").OnEvent("Click", (*) => CloseGui())
+    ; Label comentário
+    toDoGui.SetFont("s9 c" COL_LABEL, "Segoe UI")
+    toDoGui.Add("Text", "w300 y+10 Background" COL_BG, "COMENTÁRIO")
+
+    ; Campo comentário
+    toDoGui.SetFont("s10 c" COL_TEXT, "Consolas")
+    commentField := toDoGui.Add("Edit", "w300 h80 y+4 vComment Multi Background" COL_INPUT)
+
+    ; Botões
+    toDoGui.SetFont("s9 c" COL_TEXT, "Segoe UI")
+    toDoGui.Add("Button", "Default w144 y+14", "✔  Salvar").OnEvent("Click", SaveTask)
+    toDoGui.Add("Button", "w144 x+12", "✖  Cancelar").OnEvent("Click", (*) => CloseGui())
 
     toDoGui.OnEvent("Close", (*) => CloseGui())
     toDoGui.Show()

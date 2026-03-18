@@ -10,14 +10,11 @@
 WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook-test/20f1c56e-73c7-42ed-bba3-3a58f78be234"
 ; ─────────────────────────────────────────
 
-; ── Paleta VS Code Dark ──────────────────
-COL_BG       := "1E1E1E"  ; fundo da janela
-COL_INPUT    := "2D2D2D"  ; fundo dos campos
-COL_BORDER   := "3C3C3C"  ; borda sutil
-COL_TEXT     := "D4D4D4"  ; texto principal
-COL_LABEL    := "9CDCFE"  ; labels (azul VS Code)
-COL_BTN_SAVE := "0E639C"  ; botão salvar (azul)
-COL_BTN_CANC := "3C3C3C"  ; botão cancelar
+; ── Paleta estilo n8n ───────────────────
+COL_BG    := "1A1A1A"  ; fundo da janela
+COL_INPUT := "2D2D2D"  ; fundo dos campos
+COL_TEXT  := "E0E0E0"  ; texto dos campos
+COL_LABEL := "E8914A"  ; labels (laranja n8n)
 ; ────────────────────────────────────────
 
 ; Escapa uma string para uso seguro dentro de JSON
@@ -41,29 +38,29 @@ JsonEscape(str) {
 
     toDoGui := Gui("+AlwaysOnTop", "Nova Tarefa - To-Do")
     toDoGui.BackColor := COL_BG
-    toDoGui.MarginX := 18
-    toDoGui.MarginY := 14
+    toDoGui.MarginX := 20
+    toDoGui.MarginY := 16
 
-    ; Labels
+    ; Label título
     toDoGui.SetFont("s9 c" COL_LABEL, "Segoe UI")
-    toDoGui.Add("Text", "w300 Background" COL_BG, "TÍTULO")
+    toDoGui.Add("Text", "w300 Background" COL_BG, "Título")
 
     ; Campo título
-    toDoGui.SetFont("s10 c" COL_TEXT, "Consolas")
-    titleField := toDoGui.Add("Edit", "w300 y+4 vTitle Background" COL_INPUT)
+    toDoGui.SetFont("s10 c" COL_TEXT, "Segoe UI")
+    titleField := toDoGui.Add("Edit", "w300 h28 y+5 vTitle Background" COL_INPUT)
 
     ; Label comentário
     toDoGui.SetFont("s9 c" COL_LABEL, "Segoe UI")
-    toDoGui.Add("Text", "w300 y+10 Background" COL_BG, "COMENTÁRIO")
+    toDoGui.Add("Text", "w300 y+12 Background" COL_BG, "Comentário")
 
     ; Campo comentário
-    toDoGui.SetFont("s10 c" COL_TEXT, "Consolas")
-    commentField := toDoGui.Add("Edit", "w300 h80 y+4 vComment Multi Background" COL_INPUT)
+    toDoGui.SetFont("s10 c" COL_TEXT, "Segoe UI")
+    commentField := toDoGui.Add("Edit", "w300 h80 y+5 vComment Multi Background" COL_INPUT)
 
     ; Botões
     toDoGui.SetFont("s9 c" COL_TEXT, "Segoe UI")
-    toDoGui.Add("Button", "Default w144 y+14", "✔  Salvar").OnEvent("Click", SaveTask)
-    toDoGui.Add("Button", "w144 x+12", "✖  Cancelar").OnEvent("Click", (*) => CloseGui())
+    toDoGui.Add("Button", "Default w144 y+16", "Salvar").OnEvent("Click", SaveTask)
+    toDoGui.Add("Button", "w144 x+12", "Cancelar").OnEvent("Click", (*) => CloseGui())
 
     toDoGui.OnEvent("Close", (*) => CloseGui())
     toDoGui.Show()

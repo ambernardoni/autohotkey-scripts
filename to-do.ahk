@@ -1,5 +1,5 @@
 ; to-do.ahk
-; Pressione Ctrl+Win+T para abrir o formulário de nova tarefa
+; Pressione Ctrl+Win+↑ para abrir o formulário de nova tarefa
 ; Os dados são enviados via POST para o webhook configurado abaixo
 
 #Requires AutoHotkey v2.0
@@ -21,7 +21,7 @@ JsonEscape(str) {
     return str
 }
 
-^#t::
+^#Up::
 {
     ; Evita abrir múltiplas janelas
     if WinExist("Nova Tarefa - To-Do") {
@@ -37,6 +37,10 @@ JsonEscape(str) {
     toDoGui.Add("Text", "w300", "📌 Título:")
     titleField := toDoGui.Add("Edit", "w300 vTitle")
 
+    ; Enter no campo Título dispara o envio direto
+    titleField.OnEvent("Change", (*) => "")  ; garante que o controle está ativo
+    OnMessage(0x0100, WM_KEYDOWN)  ; intercepta keydown globalmente na GUI
+
     toDoGui.Add("Text", "w300 y+10", "💬 Comentário:")
     commentField := toDoGui.Add("Edit", "w300 h90 vComment Multi")
 
@@ -45,6 +49,19 @@ JsonEscape(str) {
 
     toDoGui.OnEvent("Close", (*) => toDoGui.Destroy())
     toDoGui.Show()
+    titleField.Focus()
+
+    ; Captura Enter no título e Esc em qualquer lugar
+    WM_KEYDOWN(wParam, lParam, msg, hwnd) {
+        if (hwnd = titleField.Hwnd && wParam = 13) { ; 13 = Enter
+            SaveTask(0, 0)
+            return 0
+        }
+        if (wParam = 27) { ; 27 = Esc
+            toDoGui.Destroy()
+            return 0
+        }
+    }
 
     SaveTask(btn, *) {
         data := toDoGui.Submit(false)

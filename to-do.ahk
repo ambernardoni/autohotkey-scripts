@@ -7,7 +7,7 @@
 ; ─────────────────────────────────────────
 ; CONFIGURAÇÃO — troque a URL aqui quando
 ; for para produção
-WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook-test/20f1c56e-73c7-42ed-bba3-3a58f78be234"
+WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook/20f1c56e-73c7-42ed-bba3-3a58f78be234"
 ; ─────────────────────────────────────────
 
 ; ── Paleta estilo n8n ───────────────────

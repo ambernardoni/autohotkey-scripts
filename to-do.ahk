@@ -1,7 +1,14 @@
 ; to-do.ahk
 ; Pressione Ctrl+Alt+T para abrir o formulário de nova tarefa
+; Os dados são enviados via POST para o webhook configurado abaixo
 
 #Requires AutoHotkey v2.0
+
+; ─────────────────────────────────────────
+; CONFIGURAÇÃO — troque a URL aqui quando
+; for para produção
+WEBHOOK_URL := "https://a2accelerate.app.n8n.cloud/webhook-test/20f1c56e-73c7-42ed-bba3-3a58f78be234"
+; ─────────────────────────────────────────
 
 ^!t::
 {
@@ -36,11 +43,27 @@
             return
         }
 
-        msg := "✅ Tarefa criada com sucesso!`n`n"
-            . "Título:      " data.Title "`n"
-            . "Comentário: " (Trim(data.Comment) != "" ? data.Comment : "(sem comentário)")
+        ; Escapa aspas para JSON válido
+        safeTitle   := StrReplace(StrReplace(data.Title,   "\", "\\"), '"', '\"')
+        safeComment := StrReplace(StrReplace(data.Comment, "\", "\\"), '"', '\"')
 
-        MsgBox(msg, "To-Do", "Iconi OK")
-        toDoGui.Destroy()
+        json := '{"title":"' safeTitle '","comment":"' safeComment '"}'
+
+        ; Envia via WinHttp
+        try {
+            http := ComObject("WinHttp.WinHttpRequest.5.1")
+            http.Open("POST", WEBHOOK_URL, false)
+            http.SetRequestHeader("Content-Type", "application/json")
+            http.Send(json)
+
+            if (http.Status = 200) {
+                MsgBox("✅ Tarefa enviada com sucesso!", "To-Do", "Iconi OK T3")
+                toDoGui.Destroy()
+            } else {
+                MsgBox("⚠️ Webhook retornou status " http.Status "`n`n" http.ResponseText, "Erro", "Icon! OK")
+            }
+        } catch as err {
+            MsgBox("❌ Falha ao enviar:`n" err.Message, "Erro de Conexão", "Icon! OK")
+        }
     }
 }

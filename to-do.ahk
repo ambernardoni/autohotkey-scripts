@@ -37,19 +37,25 @@ JsonEscape(str) {
     toDoGui.Add("Text", "w300", "📌 Título:")
     titleField := toDoGui.Add("Edit", "w300 vTitle")
 
-    ; Enter no campo Título dispara o envio direto
-    titleField.OnEvent("Change", (*) => "")  ; garante que o controle está ativo
-    OnMessage(0x0100, WM_KEYDOWN)  ; intercepta keydown globalmente na GUI
-
     toDoGui.Add("Text", "w300 y+10", "💬 Comentário:")
     commentField := toDoGui.Add("Edit", "w300 h90 vComment Multi")
 
     toDoGui.Add("Button", "Default w140 y+14", "✔ Salvar").OnEvent("Click", SaveTask)
-    toDoGui.Add("Button", "w140 x+10", "✖ Cancelar").OnEvent("Click", (*) => toDoGui.Destroy())
+    toDoGui.Add("Button", "w140 x+10", "✖ Cancelar").OnEvent("Click", (*) => CloseGui())
 
-    toDoGui.OnEvent("Close", (*) => toDoGui.Destroy())
+    toDoGui.OnEvent("Close", (*) => CloseGui())
     toDoGui.Show()
     titleField.Focus()
+
+    ; Registra handler e guarda referência para poder desregistrar depois
+    keyHandler := WM_KEYDOWN
+    OnMessage(0x0100, keyHandler)
+
+    ; Ponto único de fechamento — sempre desregistra o handler antes de destruir
+    CloseGui() {
+        OnMessage(0x0100, keyHandler, 0)
+        toDoGui.Destroy()
+    }
 
     ; Captura Enter no título e Esc em qualquer lugar
     WM_KEYDOWN(wParam, lParam, msg, hwnd) {
@@ -58,7 +64,7 @@ JsonEscape(str) {
             return 0
         }
         if (wParam = 27) { ; 27 = Esc
-            toDoGui.Destroy()
+            CloseGui()
             return 0
         }
     }
@@ -67,7 +73,7 @@ JsonEscape(str) {
         data := toDoGui.Submit(false)
 
         if (Trim(data.Title) = "" && Trim(data.Comment) = "") {
-            toDoGui.Destroy()
+            CloseGui()
             return
         }
 
@@ -86,7 +92,7 @@ JsonEscape(str) {
 
             if (http.Status = 200) {
                 MsgBox("✅ Tarefa enviada com sucesso!", "To-Do", "Iconi OK T3")
-                toDoGui.Destroy()
+                CloseGui()
             } else {
                 MsgBox("⚠️ Webhook retornou status " http.Status "`n`n" http.ResponseText, "Erro", "Icon! OK")
             }
